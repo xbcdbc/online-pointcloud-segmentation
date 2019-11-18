@@ -45,8 +45,6 @@ private:
     double segmentTheta;
 
     pcl::PointCloud<PointType>::Ptr fullCloud;     // projected velodyne raw cloud, but saved in the form of 1-D matrix
-    pcl::PointCloud<PointType>::Ptr fullInfoCloud; // same as fullCloud, but with intensity - range
-
    
     PointType nanPoint; // fill in fullCloud at each iteration
     cv::Mat groundMat; // ground matrix for ground cloud marking
@@ -63,10 +61,8 @@ private:
     
 public:
     pcl::PointCloud<PointType>::Ptr segmentedCloud;
-    pcl::PointCloud<PointType>::Ptr segmentedCloudPure;
     pcl::PointCloud<PointType>::Ptr NonegroundCloud;
     pcl::PointCloud<PointType>::Ptr groundCloud;
-    pcl::PointCloud<PointType>::Ptr outlierCloud;
 
     cv::Mat labelMat; // label matrix for segmentaiton marking
 

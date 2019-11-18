@@ -3,15 +3,15 @@
 
 
 RIBSegment::RIBSegment():
-groundScanInd(17),
+groundScanInd(20),
 Horizon_SCAN(224),
 N_SCAN(38),
 sensorMountAngle(0.0),
-segmentValidPointNum(6),
-segmentValidLineNum(3),
+segmentValidPointNum(10),
+segmentValidLineNum(5),
 segmentAlphaX(0.478/ 180.0 * M_PI),
 segmentAlphaY(0.495/ 180.0 * M_PI),
-segmentTheta(50/180.0 * M_PI)
+segmentTheta(45/180.0 * M_PI)
 {
     nanPoint.x = std::numeric_limits<float>::quiet_NaN();
     nanPoint.y = std::numeric_limits<float>::quiet_NaN();
@@ -19,7 +19,6 @@ segmentTheta(50/180.0 * M_PI)
     nanPoint.intensity = -1;
 
     allocateMemory();
-    //resetParameters();
 }
 
 
@@ -27,17 +26,13 @@ void RIBSegment::allocateMemory(){
 
     rangeMat = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
     fullCloud.reset(new pcl::PointCloud<PointType>());
-    fullInfoCloud.reset(new pcl::PointCloud<PointType>());
 
     groundCloud.reset(new pcl::PointCloud<PointType>());
     NonegroundCloud.reset(new pcl::PointCloud<PointType>());
     segmentedCloud.reset(new pcl::PointCloud<PointType>());
-    segmentedCloudPure.reset(new pcl::PointCloud<PointType>());
-    outlierCloud.reset(new pcl::PointCloud<PointType>());
-
+   
     fullCloud->points.resize(N_SCAN*Horizon_SCAN);
-    fullInfoCloud->points.resize(N_SCAN*Horizon_SCAN);
-
+    
     std::pair<int8_t, int8_t> neighbor;
     neighbor.first = -1; neighbor.second =  0; neighborIterator.push_back(neighbor);
     neighbor.first =  0; neighbor.second =  1; neighborIterator.push_back(neighbor);
@@ -58,11 +53,8 @@ void RIBSegment::resetParameters(pcl::PointCloud<PointType>::Ptr input){
     groundCloud->clear();
     NonegroundCloud->clear();
     segmentedCloud->clear();
-    segmentedCloudPure->clear();
-    outlierCloud->clear();
 
     std::fill(fullCloud->points.begin(), fullCloud->points.end(), nanPoint);
-    std::fill(fullInfoCloud->points.begin(), fullInfoCloud->points.end(), nanPoint);
     groundMat = cv::Mat(N_SCAN, Horizon_SCAN, CV_8S, cv::Scalar::all(0));
     labelMat = cv::Mat(N_SCAN, Horizon_SCAN, CV_32S, cv::Scalar::all(0));
     labelCount = 1;
@@ -82,7 +74,6 @@ void RIBSegment::resetParameters(pcl::PointCloud<PointType>::Ptr input){
         columnIdn = i%Horizon_SCAN;
     
         range = sqrt(thisPoint.x * thisPoint.x + thisPoint.y * thisPoint.y + thisPoint.z * thisPoint.z);
-        //std::cout<<range<<" ";
         if (range < 0.07)
         {
             continue;
@@ -92,11 +83,7 @@ void RIBSegment::resetParameters(pcl::PointCloud<PointType>::Ptr input){
         thisPoint.intensity = (float)rowIdn + (float)columnIdn / 10000.0;
         index = columnIdn  + rowIdn * Horizon_SCAN;
         fullCloud->points[index] = thisPoint;
-        fullInfoCloud->points[index] = thisPoint;
-        fullInfoCloud->points[index].intensity = range; // the corresponding range of a point is saved as "intensity"
     }
-    //cv::imshow("range image",rangeMat);
-    //cv::waitKey();
 }
 
 RIBSegment::~RIBSegment(){}
@@ -163,20 +150,17 @@ void RIBSegment::cloudSegmentation(){
     for (size_t i = 0; i < N_SCAN; ++i)
         for (size_t j = 0; j < Horizon_SCAN; ++j)
         {
-            //std::cout<<"index:"<<i<<" "<<j<<std::endl;
             if (labelMat.at<int>(i,j) == 0)
             {
                 labelComponents(i, j);
             }
         }
-    
     std::cout<<"segment complete:"<<labelCount<<std::endl;
     for (size_t i = 0; i < N_SCAN; ++i){
         for (size_t j = 0; j < Horizon_SCAN; ++j){ 
             if (labelMat.at<int>(i,j) > 0 && labelMat.at<int>(i,j) != 999999){
-                //std::cout<<"("<<i<<","<<j<<") ";
-                segmentedCloudPure->push_back(fullCloud->points[j + i*Horizon_SCAN]);
-                segmentedCloudPure->points.back().intensity = labelMat.at<int>(i,j);
+                segmentedCloud->push_back(fullCloud->points[j + i*Horizon_SCAN]);
+                segmentedCloud->points.back().intensity = labelMat.at<int>(i,j);
             }
         }
     }

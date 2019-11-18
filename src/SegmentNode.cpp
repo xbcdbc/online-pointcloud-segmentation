@@ -26,10 +26,10 @@ void callbackPointclouds(const sensor_msgs::PointCloud2ConstPtr& input)
     segment.groundRemoval();
     std::cout<<"remove ground"<<std::endl;
     segment.cloudSegmentation();
-    std::cout<<"segment size:"<<segment.segmentedCloudPure->points.size()<<std::endl;
+    std::cout<<"segment size:"<<segment.segmentedCloud->points.size()<<std::endl;
 
     sensor_msgs::PointCloud2 points_seg_msg,NoneGround_msg;
-    pcl::toROSMsg(*(segment.segmentedCloudPure),points_seg_msg);
+    pcl::toROSMsg(*(segment.segmentedCloud),points_seg_msg);
     pcl::toROSMsg(*(segment.NonegroundCloud),NoneGround_msg);
 
     points_seg_msg.header=input->header;
