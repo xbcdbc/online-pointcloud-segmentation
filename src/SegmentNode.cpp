@@ -1,9 +1,19 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Peng Wei
+ * @Email: poetpw@163.com
+ * @Date: 2019-11-07 14:46:42
+ * @LastEditors: Peng Wei
+ * @LastEditTime: 2019-12-09 11:47:56
+ */
 
 #include "ros/ros.h"
 #include <string>
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>                //PCD读写类相关的头文件
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 
@@ -21,6 +31,7 @@ void callbackPointclouds(const sensor_msgs::PointCloud2ConstPtr& input)
 {
     std::cout<<"new data come"<<std::endl;
     pcl::fromROSMsg(*input,data);
+    pcl::io::savePCDFileASCII ("/home/rock/workspace/tof/PointCloudSegmentation/rawdata.pcd", data);
     std::cout<<"points size:"<<data.points.size()<<std::endl;
     segment.resetParameters(data.makeShared());
     segment.groundRemoval();

@@ -1,3 +1,13 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Peng Wei
+ * @Email: poetpw@163.com
+ * @Date: 2019-11-07 14:46:42
+ * @LastEditors: Peng Wei
+ * @LastEditTime: 2019-12-09 11:47:56
+ */
+
 #include "RIBSegment.h"
 #include <opencv2/opencv.hpp>
 

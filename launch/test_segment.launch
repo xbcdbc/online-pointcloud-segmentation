@@ -1,0 +1,16 @@
+<launch>
+
+  <!-- segment node /-->
+  <node pkg="test_segment" type="test_segment_node" name="test_segment" output="screen" >
+    <!--remap from="scan" to="tof_scan"/-->
+    <!--param name="angle_max" value="0.785" /-->
+    <!--param name="angle_min" value="-0.785" /-->
+  </node>
+
+  <!--rviz node /-->
+  <node pkg="rviz" type="rviz" name="rviz" output="screen"  args="-d $(find test_segment)/rviz_cfg/default.rviz"/>
+
+  <!--play rosbag-->
+  <node pkg="rosbag" type="play" name="play" output="screen" args="--clock  /home/rock/workspace/Segment/2019-11-08-16-35-41.bag"/>
+
+</launch>  

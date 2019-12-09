@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
 )
-find_package(EIGEN REQUIRED QUIET)
+find_package(Eigen3 REQUIRED)
 find_package(PCL REQUIRED QUIET)
 find_package(OpenCV REQUIRED QUIET)
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -36,7 +36,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
 	${OpenCV_INCLUDE_DIRS}
-  ${EIGEN_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT_NAME}_node src/SegmentNode.cpp src/RIBSegment.cpp)
@@ -46,7 +46,7 @@ add_executable(${PROJECT_NAME}_node src/SegmentNode.cpp src/RIBSegment.cpp)
    ${catkin_LIBRARIES}
    ${PCL_LIBRARIES} 
    ${OpenCV_LIBRARIES}
-   ${EIGEN_LIBRARIES}
+   ${EIGEN3_LIBRARIES}
  )
 
 
